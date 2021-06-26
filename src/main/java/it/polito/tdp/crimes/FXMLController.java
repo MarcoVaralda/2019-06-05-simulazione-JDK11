@@ -5,6 +5,8 @@
 package it.polito.tdp.crimes;
 
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.crimes.model.Model;
@@ -25,13 +27,13 @@ public class FXMLController {
     private URL location;
 
     @FXML // fx:id="boxAnno"
-    private ComboBox<?> boxAnno; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxMese"
-    private ComboBox<?> boxMese; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxMese; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxGiorno"
-    private ComboBox<?> boxGiorno; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxGiorno; // Value injected by FXMLLoader
 
     @FXML // fx:id="btnCreaReteCittadina"
     private Button btnCreaReteCittadina; // Value injected by FXMLLoader
@@ -47,12 +49,30 @@ public class FXMLController {
 
     @FXML
     void doCreaReteCittadina(ActionEvent event) {
-
+    	int anno = this.boxAnno.getValue();
+    	
+    	this.txtResult.setText(this.model.creaGrafo(anno)+this.model.getAdiacenti());
+    	this.boxMese.getItems().addAll(this.model.getMesi());
+    	this.boxGiorno.getItems().addAll(this.model.getGiorni());    	
     }
 
     @FXML
     void doSimula(ActionEvent event) {
-
+    	int giorno = this.boxGiorno.getValue();
+    	int mese = this.boxMese.getValue();
+    	int anno = this.boxAnno.getValue();
+    	
+    	String stringaN = this.txtN.getText();
+    	int N = 0;
+    	try {
+    		N = Integer.parseInt(stringaN);
+    	}
+    	catch(NumberFormatException nbe) {
+    		this.txtResult.setText("Devi inserire un numero intero!");
+    		return;
+    	}
+    	
+    	this.txtResult.appendText(this.model.simula(N, anno, mese, giorno));
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -69,5 +89,9 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	List<Integer> anni = new LinkedList<>();
+    	for(int i=2014;i<=2017;i++)
+    		anni.add(i);
+    	this.boxAnno.getItems().addAll(anni);
     }
 }
